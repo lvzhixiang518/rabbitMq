@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
+    <!--定义过期队列及其属性，不存在则自动创建-->
+    <rabbit:queue id="my_tt1_queue" name="my_tt1_queue" auto-declare="true">
+        <rabbit:queue-arguments>
+            <!--投递到该队列的消息如果没有在5秒之内消费则被进行删除-->
+            <entry key="x-message-ttl" value-type="long" value="5000"></entry>
+        </rabbit:queue-arguments>
+    </rabbit:queue>
+
+</beans>

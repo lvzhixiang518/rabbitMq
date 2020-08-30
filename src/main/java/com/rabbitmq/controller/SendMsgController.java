@@ -3,9 +3,7 @@ package com.rabbitmq.controller;
 import com.rabbitmq.config.RabbitMQConfig;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @ClassName SendMsgController
@@ -18,6 +16,14 @@ public class SendMsgController {
     //注入rabbitMQ的模板
     @Autowired
     private RabbitTemplate rabbitTemplate;
+    /**
+     * 过期队列消息
+     * 投递到该队列的消息如果没有在5秒内进行消费将被删除
+     */
+    @RequestMapping("/testTT1")
+    public void tt1QueueTest(@RequestParam String msg) {
+        rabbitTemplate.convertAndSend("my_tt1_queue",msg);
+    }
 
     @GetMapping("/sendMsg")
     public String sendMsg(@RequestParam String msg,@RequestParam String key){
