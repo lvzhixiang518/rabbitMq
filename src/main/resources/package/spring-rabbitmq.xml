@@ -10,4 +10,50 @@
         </rabbit:queue-arguments>
     </rabbit:queue>
 
+
+    <!--================================死信队列==========================================-->
+    <!--定义过期队列及其属性，不存在则自动创建-->
+    <rabbit:queue id="my_ttl_dlx_queue" name="my_ttl_dlx_queue" auto-declare="true">
+        <rabbit:queue-arguments>
+            <!--投递到该队列的消息如果没有在6秒之内消费则被进行删除-->
+            <entry key="x-message-ttl" value-type="long" value="6000"></entry>
+            <!--设置当消息过期之后投递到对应的死信交换机-->
+            <entry key="x-dead-letter-exchange" value="my_dlx_exchange"/>
+        </rabbit:queue-arguments>
+    </rabbit:queue>
+
+    <!--定义限制长度的队列及其属性，不存在则自动创建-->
+    <rabbit:queue id="my_length_queue" name="my_length_queue" auto-declare="true">
+        <rabbit:queue-arguments>
+            <!--投递到该队列的消息如果没有在5秒之内消费则被进行删除-->
+            <entry key="x-max-length" value-type="long" value="2"></entry>
+            <!--设置当消息过期之后投递到对应的死心交换机-->
+            <entry key="x-dead-letter-exchange" value="my_dlx_exchange"/>
+        </rabbit:queue-arguments>
+    </rabbit:queue>
+
+    <!--定义定向交换机中的持久化死心队列，不存在则自动创建-->
+    <!--auto-declare:如果队列或者交换机不存在，则自动创建新的。-->
+    <rabbit:queue id="my_dlx_queue" name="my_dlx_queue" auto-declare="true" />
+
+    <!--定义定向类型交换机，并绑定上述两个队列-->
+    <rabbit:direct-exchange name="my_dlx_exchange" id="my_dlx_exchange" auto-declare="true">
+        <rabbit:bindings>
+            <!--绑定路由键my_ttl_lzx 和 my_max_lzx ，可以将过期的消息转移到my_sixin_queue 和 my_ttl_queue 两个队列-->
+            <rabbit:binding key="my_ttl_dlx" queue="my_dlx_queue"></rabbit:binding>
+            <rabbit:binding key="my_max_dlx" queue="my_dlx_queue"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+    <!--定义定向类型交换机，根据不同的路由key投递消息-->
+    <rabbit:direct-exchange name="my_normal_exchange" id="my_normal_exchange" auto-declare="true">
+        <rabbit:bindings>
+            <!--绑定路由键my_ttl_lzx 和 my_max_lzx ，可以将过期的消息转移到my_sixin_queue 和 my_ttl_queue 两个队列-->
+            <rabbit:binding key="my_ttl_dlx" queue="my_ttl_dlx_queue"></rabbit:binding>
+            <rabbit:binding key="my_max_dlx" queue="my_length_queue"></rabbit:binding>
+        </rabbit:bindings>
+    </rabbit:direct-exchange>
+
+
+
 </beans>
