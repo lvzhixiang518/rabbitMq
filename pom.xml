@@ -58,6 +58,7 @@
             <version>4.13</version>
             <scope>test</scope>
         </dependency>
+             <!-- https://mvnrepository.com/artifact/com.rabbitmq/amqp-client这是测试 -->
     </dependencies>
 
     <build>
